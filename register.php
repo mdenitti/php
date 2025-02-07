@@ -19,4 +19,6 @@ if ($age < 16) {
 } else {
     echo "You can have beer and liquors.";
 }
+
+
 ?>
