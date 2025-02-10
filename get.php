@@ -9,9 +9,13 @@ $email = $_GET['email'];
 $phone = $_GET['phone'] ?? '00000';
 ?>
 
-<form action="update.php" method="get">
-    <input type="text" name="name" placeholder="Name" value="<?php echo $name ?>">
-    <input type="email" name="email" placeholder="Email" value="<?php echo $email ?>">
-    <input type="text" name="phone" placeholder="Phone" value="<?php echo $phone ?>">
+<form action="update.php" method="post">
+    <input type="text" name="name" placeholder="Name" value="<?php echo htmlspecialchars($name) ?>">
+    <input type="email" name="email" placeholder="Email" value="<?php echo htmlspecialchars($email) ?>">
+    <input type="text" name="phone" placeholder="Phone" value="<?php echo htmlspecialchars($phone) ?>">
     <button type="submit">Submit</button>
 </form>
+
+// update.php ;
+// submit the form and get the values from 
+// the form use the $_POST superglobal
