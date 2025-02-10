@@ -17,7 +17,7 @@ function saveToLogFile ($name, $email, $phone) {
     $currentdate = date('Y-m-d H:i:s');
 
     // string
-    $string = $currentdate.','.$email.','.$name.','.$phone.'\r\n';
+    $string = $currentdate.','.$email.','.$name.','.$phone."\r";
     
     // final write operation
     fwrite ($file,$string);
@@ -26,4 +26,4 @@ function saveToLogFile ($name, $email, $phone) {
 
 
 
-// footer always use this in a footer (c) <?php echo date('Y')
+/* footer always use this in a footer (c) <?php echo date('Y') ?> */
