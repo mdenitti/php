@@ -1,26 +1,53 @@
 <?php
-include 'assets/common.php';
-include 'assets/header.php';
-checkLogin();
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+require_once 'models/User.php';
+require_once 'assets/common.php';
+
+if (!isset($_SESSION['token'])) {
+    header("Location: index.php");
+    exit();
+}
+
+$user = new User();
+
+// Add debugging
+try {
+    $users = $user->getAll();
+    if (!$users) {
+        echo "No users found or error in query";
+    }
+    // Debug connection
+    if ($user->conn->connect_error) {
+        die("Connection failed: " . $user->conn->connect_error);
+    }
+} catch (Exception $e) {
+    die("Error: " . $e->getMessage());
+}
 
 // Handle Delete Action
 if(isset($_GET['delete'])) {
-    $id = $_GET['delete'];
-    deleteUser($id);
-    header("Location: dashboard.php?msg=deleted");
-    exit();
+    $user->id = $_GET['delete'];
+    if($user->delete()) {
+        header("Location: dashboard.php?msg=deleted");
+        exit();
+    }
 }
 
 // Handle Update Action
 if(isset($_POST['update'])) {
-    $id = $_POST['id'];
-    $name = $_POST['name'];
-    $email = $_POST['email'];
-    $status = $_POST['status'];
-    updateUser($id, $name, $email, $status);
-    header("Location: dashboard.php?msg=updated");
-    exit();
+    $user->id = $_POST['id'];
+    $user->name = $_POST['name'];
+    $user->email = $_POST['email'];
+    $user->status = $_POST['status'];
+    if($user->update()) {
+        header("Location: dashboard.php?msg=updated");
+        exit();
+    }
 }
+
+include 'assets/header.php';
 ?>
 
 <div class="container mt-5">
@@ -34,27 +61,30 @@ if(isset($_POST['update'])) {
             <?php endif; ?>
 
             <?php if(isset($_GET['edit'])): ?>
-                <?php $user = getUser($_GET['edit']); ?>
+                <?php 
+                $user->id = $_GET['edit'];
+                $editUser = $user->getOne(); 
+                ?>
                 <div class="card mb-4">
                     <div class="card-header">
                         Edit User
                     </div>
                     <div class="card-body">
                         <form method="POST">
-                            <input type="hidden" name="id" value="<?php echo $user['id']; ?>">
+                            <input type="hidden" name="id" value="<?php echo $editUser['id']; ?>">
                             <div class="mb-3">
                                 <label>Name</label>
-                                <input type="text" name="name" class="form-control" value="<?php echo $user['name']; ?>">
+                                <input type="text" name="name" class="form-control" value="<?php echo $editUser['name']; ?>">
                             </div>
                             <div class="mb-3">
                                 <label>Email</label>
-                                <input type="email" name="email" class="form-control" value="<?php echo $user['email']; ?>">
+                                <input type="email" name="email" class="form-control" value="<?php echo $editUser['email']; ?>">
                             </div>
                             <div class="mb-3">
                                 <label>Status</label>
                                 <select name="status" class="form-control">
-                                    <option value="1" <?php echo $user['status'] == 1 ? 'selected' : ''; ?>>Active</option>
-                                    <option value="0" <?php echo $user['status'] == 0 ? 'selected' : ''; ?>>Inactive</option>
+                                    <option value="1" <?php echo $editUser['status'] == 1 ? 'selected' : ''; ?>>Active</option>
+                                    <option value="0" <?php echo $editUser['status'] == 0 ? 'selected' : ''; ?>>Inactive</option>
                                 </select>
                             </div>
                             <button type="submit" name="update" class="btn btn-primary">Update User</button>
@@ -80,22 +110,15 @@ if(isset($_POST['update'])) {
                         </thead>
                         <tbody>
                             <?php
-                            $users = getAllUsers();
-                            foreach ($users as $row):
+                            $users = $user->getAll();
+                            foreach($users as $row):
                             ?>
                             <tr>
                                 <td><?php echo $row['name']; ?></td>
                                 <td><?php echo $row['email']; ?></td>
-
-                                <!-- Ternary Operator alert:
-                                The expression $row['status'] == 1 ? 'Active' : 'Inactive' uses the ternary operator to decide what text to display:
-                                If $row['status'] equals 1, it outputs "Active".
-                                Otherwise, it outputs "Inactive". -->
-
                                 <td><?php echo $row['status'] == 1 ? 'Active' : 'Inactive'; ?></td>
                                 <td><?php echo $row['date']; ?></td>
                                 <td>
-                                 <!-- $GET Superglobal alert: -->
                                     <a href="?edit=<?php echo $row['id']; ?>" class="btn btn-sm btn-primary">Edit</a>
                                     <a href="?delete=<?php echo $row['id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</a>
                                 </td>

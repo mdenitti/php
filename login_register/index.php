@@ -1,5 +1,5 @@
 <?php
-include 'assets/common.php';
+require_once 'assets/common.php';
 include 'assets/header.php';
 
 // If user is already logged in, redirect to dashboard
