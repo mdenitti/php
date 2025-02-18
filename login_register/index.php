@@ -13,7 +13,17 @@ if (isset($_SESSION['token'])) {
         <div class="col-md-6">
             <?php if(isset($_GET['success']) && $_GET['success'] == 1): ?>
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    Operation successful! Thank you.
+                    <?php 
+                    if (isset($_GET['welcome_email'])) {
+                        if ($_GET['welcome_email'] === 'sent') {
+                            echo 'Registration successful! Welcome email has been sent to your inbox.';
+                        } else {
+                            echo 'Registration successful! However, the welcome email could not be sent.';
+                        }
+                    } else {
+                        echo 'Operation successful! Thank you.';
+                    }
+                    ?>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             <?php endif; ?>
