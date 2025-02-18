@@ -119,8 +119,13 @@ include 'assets/header.php';
                                 <td><?php echo $row['status'] == 1 ? 'Active' : 'Inactive'; ?></td>
                                 <td><?php echo $row['date']; ?></td>
                                 <td>
-                                    <a href="?edit=<?php echo $row['id']; ?>" class="btn btn-sm btn-primary">Edit</a>
-                                    <a href="?delete=<?php echo $row['id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</a>
+                                    <div class="btn-group" role="group">
+                                        <a href="?edit=<?php echo $row['id']; ?>" class="btn btn-sm btn-primary">Edit</a>
+                                        <a href="generate_pdf.php?id=<?php echo $row['id']; ?>" class="btn btn-sm btn-secondary">
+                                            <i class="fas fa-file-pdf"></i>
+                                        </a>
+                                        <a href="?delete=<?php echo $row['id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</a>
+                                    </div>
                                 </td>
                             </tr>
                             <?php endforeach; ?>
